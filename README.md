@@ -28,7 +28,8 @@ vertex/
 - Train/Test 분할: 80/20 (1652 / 414)
 - StandardScaler 적용 (학습 데이터 기준 fit)
 - `preprocessor.pkl` 저장 (scaler + feature_names + 메타정보)
-- **최종 피처 수: 39개**
+- 추가 수정 예정
+- **최종 피처 수: 42개**
 
 ### 2. XGBoost 베이스라인 모델 (`models/train.py`)
 - XGBoost 회귀 모델 학습 (500 estimators, max_depth=6, lr=0.05)

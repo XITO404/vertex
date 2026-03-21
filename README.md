@@ -16,6 +16,7 @@ vertex/
 │   └── compare_models.py       # MLP, RF 모델 학습/ 평가
 ├── data_preprocessing.py      # 데이터 전처리 파이프라인
 └── README.md                  # 본 문서
+- 수정 예정
 ```
 
 ---

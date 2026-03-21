@@ -1,6 +1,6 @@
 # AI 기반 크립 수명 예측 및 합금 설계 시스템
 
-> 고온·고압 환경 핵심 소재의 크리프 파단 수명을 예측하고, 수명을 최대화하는 최적 합금 조성을 AI로 도출하는 웹 애플리케이션
+> 고온·고압 환경 핵심 소재의 크리프(Creep) 파단 수명을 예측하고, 수명을 최대화하는 최적 합금 조성을 AI로 도출하는 웹 애플리케이션
 
 ---
 
@@ -10,26 +10,30 @@
 vertex/
 ├── data/
 │   ├── taka.xlsx              # 원본 데이터 (2066행 × 31열)
-│   └── preprocessor.pkl       # 저장된 StandardScaler + 피처 메타정보
+│   ├── preprocessor.pkl       # 저장된 StandardScaler + 피처 메타정보
+│   └── correlation_heatmap.png # 전처리 결과 변수 간 상관관계 히트맵
+├── documents/
+│   └── 회의록.md               # 팀 프로젝트 진행 기록
 ├── models/
 │   ├── train.py               # XGBoost 모델 학습/평가
 │   └── compare_models.py       # MLP, RF 모델 학습/ 평가
-├── data_preprocessing.py      # 데이터 전처리 파이프라인
+├── data_preprocessing.py      # 데이터 전처리 및 피처 엔지니어링
+├── streamlit_app.py           # Streamlit 기반 웹 애플리케이션 실행 파일
+├── requirements.txt           # 프로젝트 라이브러리 의존성 목록
 └── README.md                  # 본 문서
 ```
 
 ---
 
-### 1. 데이터 전처리 파이프라인 (`data_preprocessing.py`)
+### 1. 데이터 전처리 및 피처 엔지니어링 (`data_preprocessing.py`)
 - 원본 데이터(taka.xlsx) 로드: **2066행 × 31열**
-- 물리적 불가능값 제거 (음수 온도, 0 이하 수명 등만 제거 / 조성 0은 유지)
-- 타겟 변수 로그 변환: `log10(lifetime)`
-- 냉각 속도 원핫 인코딩: `Cooling1/2/3` (0~3) → 12개 더미 컬럼
-- Train/Test 분할: 80/20 (1652 / 414)
-- StandardScaler 적용 (학습 데이터 기준 fit)
-- `preprocessor.pkl` 저장 (scaler + feature_names + 메타정보)
-- 추가 수정 예정
-- **최종 피처 수: 42개**
+- 데이터 정제: 결측치 처리(합금 성분 NaN → 0) 및 물리적 무결성 검사 (음수 온도 등 필터링)
+- 이상치 분석: 전체 데이터의 약 14% 이상치 탐지 (응력 변수 중심 특이치 확인)
+- 물리 기반 파생 변수: 소재 도메인 지식을 반영한 Severity Index (가혹도 지수) 3종 추가<bn>
+: $N/T/A\_severity$: Hollomon-Jaffe 파라미터를 응용한 온도-시간 비선형 관계 수치화
+- 냉각 방식 최적화: `Cooling1/2/3` (0~3) → 고정형 원핫 인코딩 적용 (12개 컬럼)
+- 데이터 직렬화: 학습된 `StandardScaler`와 메타 정보를 `preprocessor.pkl`로 저장
+- **최종 피처 수: 42개** (기존 31개 대비 11개 확장)
 
 ### 2. XGBoost 베이스라인 모델 (`models/train.py`)
 - XGBoost 회귀 모델 학습 (500 estimators, max_depth=6, lr=0.05)
@@ -51,7 +55,7 @@ vertex/
 | 구분 | 기술 |
 |------|------|
 | 언어 | Python 3.13 |
-| ML/Data | Pandas, Scikit-learn, XGBoost |
+| ML/Data | Pandas, NumPy, Scikit-learn, XGBoost, Seaborn, Joblib |
 | 최적화 | DEAP (유전 알고리즘) |
 | 백엔드 | FastAPI |
 | 프론트엔드 | Streamlit |

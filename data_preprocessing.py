@@ -115,10 +115,10 @@ def build_preprocessor(X_train: pd.DataFrame) -> StandardScaler:
 
 
 def get_feature_columns(df: pd.DataFrame) -> list[str]:
-    """Return the list of feature columns after one-hot encoding."""
-    exclude = {TARGET, "log_lifetime"}
+    """Return the list of feature columns excluding target and unnecessary ones."""
+    # TARGET과 log_lifetime 빼고, Cooling 관련 원본 컬럼들도 제외
+    exclude = {TARGET, "log_lifetime", "Cooling1", "Cooling2", "Cooling3"}
     return [c for c in df.columns if c not in exclude]
-
 
 # ── Main preprocessing pipeline ─────────────────────────────────────────
 def preprocess(

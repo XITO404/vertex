@@ -16,7 +16,9 @@ vertex/
 │   └── 회의록.md               # 팀 프로젝트 진행 기록
 ├── models/
 │   ├── train.py               # XGBoost 모델 학습/평가
-│   └── compare_models.py       # MLP, RF 모델 학습/ 평가
+│   └── compare_models.py      # MLP, RF 모델 학습/ 평가
+├── plots/
+│   └── 성능 비교 그래프        # 다양한 알고리즘 간의 수명 예측 정확도 비교
 ├── data_preprocessing.py      # 데이터 전처리 및 피처 엔지니어링
 ├── streamlit_app.py           # Streamlit 기반 웹 애플리케이션 실행 파일
 ├── requirements.txt           # 프로젝트 라이브러리 의존성 목록
